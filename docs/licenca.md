@@ -2,5 +2,5 @@
 
 Distribuído sob a licença [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.html).
 
-InfoDoc-SisGed.
-Autores originais: ECM Tecnologia e Soluções
+Baseado no sistema [Rukovoditel](https://www.rukovoditel.net.ru/).
+Autores originais: Olga Aleksandrovna Kharchishina, Sergey Vasilievich Kharchishin.
