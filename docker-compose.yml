@@ -1,0 +1,65 @@
+services:
+  web:
+    build: .
+    container_name: sisged-web
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./uploads:/var/www/html/uploads
+      - ./backups:/var/www/html/backups
+      - ./tmp:/var/www/html/tmp
+      - ./cache:/var/www/html/cache
+      - ./log:/var/www/html/log
+      - ./config:/var/www/html/config
+    depends_on:
+      - db
+    environment:
+      - PHP_UPLOAD_MAX_FILESIZE=50M
+      - PHP_POST_MAX_SIZE=50M
+      - PHP_MAX_EXECUTION_TIME=300
+      - PHP_MEMORY_LIMIT=512M
+    networks:
+      - sisged-network
+
+  db:
+    image: mysql:8.0
+    container_name: sisged-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: sisged
+      MYSQL_USER: sisged_user
+      MYSQL_PASSWORD: sisged_pass
+    volumes:
+      - sisged_mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password --sql_mode=''
+    networks:
+      - sisged-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: sisged-phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root123
+      UPLOAD_LIMIT: 50M
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+    networks:
+      - sisged-network
+
+volumes:
+  sisged_mysql_data:
+    driver: local
+
+networks:
+  sisged-network:
+    driver: bridge
